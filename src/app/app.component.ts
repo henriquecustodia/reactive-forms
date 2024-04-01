@@ -1,17 +1,47 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { NgStyle } from "@angular/common";
+import { Component } from "@angular/core";
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 
 @Component({
-  selector: 'app-root',
+  selector: "app-root",
   standalone: true,
-  imports: [RouterOutlet],
+  imports: [ReactiveFormsModule, NgStyle],
   template: `
-    <h1>Welcome to {{title}}!</h1>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <fieldset>
+        <label for="name">
+          Nome
+          <input
+            type="text"
+            name="name"
+            placeholder="Digite seu nome"
+            formControlName="name"
+          />
 
-    <router-outlet />
+          @if (form.controls.name.hasError('required') ) {
+          <div [ngStyle]="{ color: 'red' }">Nome é obrigatório</div>
+          }
+        </label>
+      </fieldset>
+        
+      <br>
+
+      <button type="submit" [disabled]="form.invalid">Salvar!</button>
+    </form>
   `,
   styles: [],
 })
 export class AppComponent {
-  title = 'reactive-forms';
+  form = new FormGroup({
+    name: new FormControl("", [Validators.required]),
+  });
+
+  onSubmit() {
+    console.log("submit", this.form.value.name);
+  }
 }
